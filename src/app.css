@@ -1,0 +1,73 @@
+/* input#date-0::before {
+    content: "";
+    width: 37px;
+    height: 40px;
+    background: #fff;
+    right: 5px;
+    bottom: 3px;
+    position: absolute;
+} */
+input[type="date"] {
+    position: relative
+}
+input[type="date"]::-webkit-calendar-picker-indicator {
+    background-color: #f00; /* Change the background color */
+    border: none; /* Remove border */
+    color: #fff; /* Change icon color */
+    cursor: pointer; /* Show pointer cursor */
+    padding: 0.25rem; /* Adjust padding */
+    border-radius: 50%; /* Make it round */
+    margin-left: 5px; /* Adjust margin if needed */
+    opacity: 0;
+    position: absolute !important;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+  }
+input[type="time"] {
+    position: relative
+}
+input[type="time"]::-webkit-calendar-picker-indicator {
+    background-color: #f00; /* Change the background color */
+    border: none; /* Remove border */
+    color: #fff; /* Change icon color */
+    cursor: pointer; /* Show pointer cursor */
+    padding: 0.25rem; /* Adjust padding */
+    border-radius: 50%; /* Make it round */
+    margin-left: 5px; /* Adjust margin if needed */
+    opacity: 0;
+    position: absolute !important;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .customInput Input{
+    width: 100% !important;
+  }
+
+  .calculate_box:hover span {
+    border: 1px solid #000 !important
+  }
+
+  .calculate_box span::before{
+    border: unset !important;
+  }
+
+
+  
+body{
+  width: 100%;
+  height: 100%;
+  /* background-image: url('./assets/images/cost-estimating-banner-1024x576.png') !important; */
+  background-color: #f1f1f1 !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+}

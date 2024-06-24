@@ -1,0 +1,13 @@
+.custom-table-head {
+    background-color: #f5f5f5; /* Change to your desired color */
+    padding: 1rem 1rem 0 1rem;
+    border-radius: 1rem 1rem 0 0;
+  /* Ensure it retains table header group display */
+    
+  }
+  
+  .custom-table-head th {
+    font-weight: bold;
+    color: #333; /* Change to your desired color */
+    padding: 10px;
+  }
