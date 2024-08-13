@@ -1,77 +1,42 @@
-// weatherUtils.js
+export const fetchWeatherData = async (lat, lon) => {
+    const proxyUrl = 'https://thingproxy.freeboard.io/fetch/';
+    const apiUrl = `https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=${lat}&lon=${lon}`;
 
-export const fetchWeatherData = (lat, lng, date, time) => {
-    const apiUrl = process.env.REACT_APP_WEATHER_API_URL;
-    const endpoint = '/wp-json/bmaxapi/v1/connect'; // Ensure this matches the endpoint path in your API
-    const url = `${apiUrl}${endpoint}`;
+    try {
+        const response = await fetch(`${proxyUrl}${apiUrl}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'User-Agent': 'YourAppName/1.0 (your-email@example.com)', // Add User-Agent as required by met.no
+            },
+        });
 
-    const data = { lat, lng, date, time };
-
-    console.log('Fetching weather data from:', url);
-    console.log('Data:', data);
-
-    return fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${process.env.REACT_APP_WEATHER_API_KEY}`,
-            'X-api-key' : 'app',
-            'X-api-Sec': 'app',
-            'X-User-Id': '204'
-
-        },
-        body: JSON.stringify(data),
-    })
-    .then((response) => {
-        console.log('Response:', response);
         if (!response.ok) {
-            throw new Error(`Failed to fetch weather data: ${response.status} ${response.statusText}`);
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
-        return response.json();
-    })
-    .then((responseData) => {
-        console.log('Weather API Response:', responseData); // Log the entire response for debugging
 
-        // Check if the response structure is as expected
-        if (responseData && responseData.status === true && responseData.message === "Weather data found" && responseData.data && responseData.data.data && responseData.data.data.current) {
-            const currentWeather = responseData.data.data.current;
+        const weatherData = await response.json();
+        console.log('Weather API Response:', weatherData);
 
-            // Define the structure of weatherData
-            const weatherData = {
-                lat,
-                lng,
-                date,
-                time,
-                temperature_high: currentWeather.temperature_high,
-                temperature_low: currentWeather.temperature_low,
-                precipitation_amount: currentWeather.precipitation_amount,
-                wind_speed: currentWeather.wind_speed,
-                feels_like: currentWeather.feels_like,
-                icon: currentWeather.icon,
-            };
-
-            console.log('Formatted Weather Data:', weatherData); // Log formatted weather data
-
-            return weatherData;
-        } else {
-            console.error('Unexpected response format or data not found:', responseData);
-            throw new Error('Unexpected response format or data not found');
-        }
-    })
-    .catch((error) => {
+        return weatherData.properties.timeseries;
+    } catch (error) {
         console.error('Error fetching weather data:', error);
-        return null; // Return null or handle error as per your application's needs
-    });
+        return null;
+    }
 };
 
 
+
+
+// fetchVehicleTypes.js
+
 export const fetchVehicleTypes = async () => {
-    const apiUrl = process.env.REACT_APP_WEATHER_API_URL;
-    const endpoint = '/wp-json/bmaxapi/v1/connect'; // Endpoint path from environment variable
+    const apiUrl = 'https://swapit.codemelodies.com';
+    const endpoint = '/wp-json/bmaxapi/v1/connect';
     const url = `${apiUrl}${endpoint}`;
 
     const requestData = {
-        // Include any necessary data in your request body
+        action: 'vehicle_types',
     };
 
     try {
@@ -80,6 +45,8 @@ export const fetchVehicleTypes = async () => {
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${process.env.REACT_APP_WEATHER_API_KEY}`,
+                
+
             },
             body: JSON.stringify(requestData),
         });
@@ -97,3 +64,128 @@ export const fetchVehicleTypes = async () => {
         throw error; // Re-throw the error to handle it in your React component
     }
 };
+
+
+// fetchTypeProject.js
+const nameTranslation = {
+    "Garasjegulv": "Garage floor",
+    "Kjellergulv": "Basement floor",
+    "Systemelementer": "System elements",
+    "Veggstøp": "Wall plaster",
+    "Terrasseplate": "Terrace board",
+    "Trapper": "Stairs",
+    "Annen støp ute": "Another cast outside",
+    "Annen støp inne": "Other cast inside",
+    "Støttemur": "Retaining wall"
+};
+
+export const fetchTypeProject = async () => {
+    const apiUrl = 'https://swapit.codemelodies.com';
+    const endpoint = '/wp-json/bmaxapi/v1/connect';
+    const url = `${apiUrl}${endpoint}`;
+
+    const requestData = {
+        action: 'concrete_presets',
+    };
+
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestData),
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to fetch type project: ${response.status} ${response.statusText}`);
+        }
+
+        const typeProject = await response.json();
+        console.log('Type Project:', typeProject); // Log the type project data
+
+        // Translate the names
+        typeProject.results = typeProject.results.map(item => ({
+            ...item,
+            name: nameTranslation[item.name] || item.name // Use translation if available
+        }));
+
+        return typeProject;
+    } catch (error) {
+        console.error('Error fetching type project:', error);
+        throw error; // Re-throw the error to handle it in your React component
+    }
+};
+
+
+
+
+
+export const fetchUploadAPI = async (file) => {
+    const apiUrl = 'https://swapit.codemelodies.com/wp-json/bmaxapi/v1/file-upload';
+
+    try {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            body: formData,
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to upload file: ${response.status} ${response.statusText}`);
+        }
+
+        const result = await response.json();
+        console.log('File upload result:', result);
+
+        return result;
+    } catch (error) {
+        console.error('Error uploading file:', error);
+        throw error; // Re-throw the error to handle it in your React component
+    }
+};
+
+
+
+
+
+export const createOrder = async (orderData) => {
+    const apiUrl = 'https://swapit.codemelodies.com';
+    const endpoint = '/wp-json/bmaxapi/v1/connect';
+    const url = `${apiUrl}${endpoint}`;
+
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                action: "create_order",
+                companyName: orderData.step3State.companyName,
+                vatNumber: orderData.step3State.vatNumber,
+                ...orderData,
+            }),
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to create order: ${response.status} ${response.statusText}`);
+        }
+
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+            const result = await response.json();
+            console.log('Order creation response:', result);
+            return result;
+        } else {
+            throw new Error('Unexpected response from server');
+        }
+    } catch (error) {
+        console.error('Error creating order:', error);
+        throw error;
+    }
+};
+
+

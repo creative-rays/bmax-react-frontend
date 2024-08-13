@@ -171,7 +171,7 @@ const authorsTableData = {
       action: (
         <SoftTypography
           component="a"
-          href="#"
+          href="#"  
           variant="caption"
           color="secondary"
           fontWeight="medium"

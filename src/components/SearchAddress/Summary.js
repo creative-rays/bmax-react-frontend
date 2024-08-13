@@ -1,15 +1,13 @@
 import React, { useState } from "react";
 import {
-  TextField, Checkbox, FormControlLabel, Button, Typography, Box, Grid, List, ListItem, ListItemText, IconButton
+  TextField, Checkbox, FormControlLabel, Button, Typography, Box, Grid, List, ListItem, ListItemText, IconButton, Avatar
 } from "@mui/material";
 import { useNavigate, useLocation } from "react-router-dom";
-import DefaultLayout from "layouts/authentication/components/DefaultLayout/DefaultLayout";
-import WbSunnyIcon from "@mui/icons-material/WbSunny";
 import DeleteIcon from "@mui/icons-material/Delete";
-import NightsStayIcon from "@mui/icons-material/NightsStay";
+import DefaultLayout from "layouts/authentication/components/DefaultLayout/DefaultLayout";
 import SoftButton from "components/SoftButton";
 import { useGlobalState } from "globalState/globalState";
-import { createOrder } from "api/apiService";
+import { createOrder, fetchUploadAPI } from './weatherUtils'; // Adjust import as necessary
 
 const Summary = () => {
   const location = useLocation();
@@ -25,6 +23,7 @@ const Summary = () => {
     accelerator,
     uploadingTypeChecked,
     selectedItem,
+    weatherData = [],
   } = location.state || {};
 
   const { state } = useGlobalState(); // Access global state
@@ -33,6 +32,8 @@ const Summary = () => {
   const [responsibility, setResponsibility] = useState("selfBuilder");
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState([]);
+  const [selectedFile, setSelectedFile] = useState(null);
+
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -45,12 +46,31 @@ const Summary = () => {
     organizationNumber: "",
     projectNumber: "",
   });
+  const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
+  const validateEmail = (email) => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(String(email).toLowerCase());
+  };
+
+  const validate = () => {
+    const newErrors = {};
+    if (responsibility === "selfBuilder" && !validateEmail(formData.email)) {
+      newErrors.email = "Valid Email is required";
+    }
+    if (responsibility === "company" && !validateEmail(formData.companyEmail)) {
+      newErrors.companyEmail = "Valid Company Email is required";
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleResponsibilityChange = (type) => {
     setResponsibility(type);
+    setErrors({});
   };
 
   const handleSubmit = async () => {
@@ -58,34 +78,81 @@ const Summary = () => {
       setMessage("Please accept the terms and conditions to proceed.");
       return;
     }
-  
+
+    if (!validate()) {
+      setMessage("Please fill in the required fields.");
+      return;
+    }
+
     setLoading(true);
     setMessage('');
-  
-    // Gather all necessary values
+
     const orderData = {
-      ...formData,
-      address,
-      dateTimeFields,
-      combinedTotalArea,
-      personName,
-      concreteConfig,
-      castWithDrop,
-      delay,
-      steelFiber,
-      accelerator,
-      uploadingTypeChecked,
-      selectedItem,
-      offerOnCasting,
-      offerOnFloorSanding,
-      responsibility,
-      acceptedTerms,
-      uploadedFiles: uploadedFiles.map(file => file.name), // Only send file names
-      globalState: state, // Include global state values
+      step1State: {
+        selectTimeLater: 0,
+        numDeliveryDates: dateTimeFields.length,
+        currentLocation: address,
+        savedLocation: address,
+        savedLat: "60.1938415",  // Example latitude, replace with actual data
+        savedLng: "11.0996763",  // Example longitude, replace with actual data
+        savedZoom: "15",
+        times: dateTimeFields.map((field, index) => ({
+          itemId: index + 1,
+          time: field.time,
+          date: field.date
+        })),
+        address_1: address,
+        country: "Norway", // Replace with actual data if available
+        postcode: "2061",  // Replace with actual data if available
+        town: "Gardermoen",  // Replace with actual data if available
+        vendor_id: "3572",  // Replace with actual data if available
+        distance: "36.74",  // Example distance, replace with actual data
+        vendor_address: "Trondheimsveien 660, 0964 Oslo", // Replace with actual data
+        vendor_email: "gjelleråsen@betongsentrum.no" // Replace with actual data
+      },
+      step2State: {
+        deliveries: [
+          {
+            deliveryId: 1,
+            calculatorAreas: [],
+            selectAreaLater: false,
+            totalArea: combinedTotalArea.toString(),
+            selectVehicleLater: false,
+            vehicleType: "40",  // Example vehicle type, replace with actual data
+            concreteIsCustom: false,
+            customConcreteType: "1",  // Example custom concrete type, replace with actual data
+            withDeclineOption: castWithDrop,
+            withRetardationOption: delay,
+            withSteelfiberOption: steelFiber,
+            withAcceleratorOption: accelerator,
+            pumpWash: false,
+            addSmallVolume: false,
+            addHose: false,
+            hoseAmount: 0
+          }
+        ],
+        numCustomConcretes: 0,
+        customConcretes: []
+      },
+      step3State: {
+        contactType: responsibility === "company" ? "company" : "selfBuilder",
+        professionalLabor: true,
+        professionalLevel: 0,
+        termsAccepted: acceptedTerms,
+        privacyAccepted: false,
+        otherInformation: "",
+        companyName: formData.companyName,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        phoneNumber: formData.phoneNumber,
+        emailAddress: formData.email,
+        vatNumber: formData.organizationNumber,
+        projectNumber: formData.projectNumber
+      }
     };
-  
+
     console.log("Order Data:", orderData); // Log data to console
-  
+
     try {
       const result = await createOrder(orderData);
       console.log("Order created successfully:", result);
@@ -99,14 +166,38 @@ const Summary = () => {
       setLoading(false);
     }
   };
-  
+
   const handleFileChange = (event) => {
-    const files = Array.from(event.target.files);
-    setUploadedFiles(prevFiles => [...prevFiles, ...files]);
+    const files = event.target.files;
+    if (files.length > 0) {
+      // Process each selected file
+      Array.from(files).forEach(file => {
+        uploadFile(file);
+      });
+    }
+  };
+
+  const uploadFile = async (file) => {
+    try {
+      // Simulating an upload process; replace with your actual upload logic
+      console.log('Uploading file:', file.name);
+      // Here, you can call your upload function or perform any necessary processing
+      // For example:
+      // const result = await fetchUploadAPI(file);
+      // console.log('Upload result:', result);
+
+      // Adding the uploaded file to the state for display purposes
+      setUploadedFiles(prevFiles => [...prevFiles, file]);
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      alert('Failed to upload file. Please check console for details.');
+    }
   };
 
   const handleFileRemove = (index) => {
-    setUploadedFiles(prevFiles => prevFiles.filter((_, i) => i !== index));
+    const updatedFiles = [...uploadedFiles];
+    updatedFiles.splice(index, 1);
+    setUploadedFiles(updatedFiles);
   };
 
   const handleInputChange = (e) => {
@@ -141,29 +232,45 @@ const Summary = () => {
             border: "1px solid #fff",
             width: "100%",
             backgroundColor: "#17C1E8",
-            borderRadius: "10px"
+            borderRadius: "10px",
           }}
         >
-          <Typography color={"#fff"} variant="body2">Deliver to {address}</Typography>
-          {dateTimeFields.map((field, index) => (
-            field.date && field.time && (
-              <Typography
-                key={index}
-                color={"#fff"}
-                variant="body2"
-                display={"flex"}
-                alignItems="center"
-                mt={2}
-              >
-                On {field.date}{" "}
-                {isDayTime(field.time) ? (
-                  <WbSunnyIcon sx={{ color: "yellow", mx: "15px", width: "25px", height: "25px" }} />
-                ) : (
-                  <NightsStayIcon sx={{ color: "#F6F1D5", mx: "15px", width: "25px", height: "25px" }} />
-                )}
-                {field.time}
-              </Typography>
-            )
+          <Typography color={"#fff"} variant="body2">
+            Deliver to {address}
+          </Typography>
+          {dateTimeFields && dateTimeFields.map((field, index) => (
+            field.date && field.time ? (
+              <Box key={index} color="#fff" mt={2} p={2} bgcolor="#333" borderRadius={4}>
+                <Typography variant="body2">
+                  On {field.date}, {field.time}
+                </Typography>
+                <Grid container spacing={2} alignItems="center">
+                  <Grid item>
+                    {weatherData[index]?.weather?.icon && (
+                      <Avatar src={`https://api.met.no/images/weathericons/svg/${weatherData[index].weather.icon}.svg`} alt="Weather Icon" sx={{ width: 24, height: 24 }} />
+                    )}
+                  </Grid>
+                  <Grid item>
+                    <Typography variant="body2">Temperature: {weatherData[index]?.weather?.temperature}°C</Typography>
+                  </Grid>
+                  <Grid item>
+                    <Typography variant="body2">Air Pressure: {weatherData[index]?.weather?.air_pressure} hPa</Typography>
+                  </Grid>
+                  <Grid item>
+                    <Typography variant="body2">Cloud Area Fraction: {weatherData[index]?.weather?.cloud_area_fraction}%</Typography>
+                  </Grid>
+                  <Grid item>
+                    <Typography variant="body2">Relative Humidity: {weatherData[index]?.weather?.relative_humidity}%</Typography>
+                  </Grid>
+                  <Grid item>
+                    <Typography variant="body2">Wind Direction: {weatherData[index]?.weather?.wind_direction}°</Typography>
+                  </Grid>
+                  <Grid item>
+                    <Typography variant="body2">Wind Speed: {weatherData[index]?.weather?.wind_speed} m/s</Typography>
+                  </Grid>
+                </Grid>
+              </Box>
+            ) : null
           ))}
         </Box>
         <Typography color={"#fff"} variant="body2">
@@ -274,6 +381,9 @@ const Summary = () => {
               {uploadedFiles.map((file, index) => (
                 <ListItem key={index}>
                   <ListItemText primary={file.name} />
+                  <IconButton edge="end" onClick={() => handleFileRemove(index)}>
+                    <DeleteIcon sx={{ color: "red" }} />
+                  </IconButton>
                 </ListItem>
               ))}
             </List>
@@ -309,7 +419,8 @@ const Summary = () => {
             }}
           >
             <Box display="flex" justifyContent="flex-end" mx={3} my={1}>
-              <Button variant="contained" component="label" sx={{ color: "#fff" }}>
+              <input type="file" hidden multiple onChange={handleFileChange} />
+              <Button variant="contained" component="label" sx={{ color: "#fff", backgroundColor: "#4caf50" }}>
                 Choose files to upload
                 <input type="file" hidden multiple onChange={handleFileChange} />
               </Button>
@@ -330,6 +441,7 @@ const Summary = () => {
               </Box>
             )}
           </Box>
+
           <Box display="flex" flexWrap="wrap" gap={2} px={2}>
             <FormControlLabel
               control={
@@ -442,6 +554,8 @@ const Summary = () => {
                     placeholder="Email"
                     name="email"
                     onChange={handleInputChange}
+                    error={!!errors.email}
+                    helperText={errors.email}
                   />
                 </Grid>
               </Grid>
@@ -494,6 +608,8 @@ const Summary = () => {
                     placeholder="Your E-mail Address"
                     name="companyEmail"
                     onChange={handleInputChange}
+                    error={!!errors.companyEmail}
+                    helperText={errors.companyEmail}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
