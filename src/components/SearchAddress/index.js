@@ -13,7 +13,7 @@ import TodayIcon from "@mui/icons-material/Today";
 import AccessTimeFilledIcon from "@mui/icons-material/AccessTimeFilled";
 import EventIcon from "@mui/icons-material/Event";
 import { useGlobalState } from "globalState/globalState";
-import { fetchWeatherData } from './weatherUtils';
+import { fetchWeatherData } from "./weatherUtils";
 
 const containerStyle = {
   width: "100%",
@@ -43,10 +43,13 @@ const SearchAddress = () => {
   const { dispatch } = useGlobalState();
 
   const libraries = useMemo(() => ["places", "geometry", "drawing"], []);
-  const loaderOptions = useMemo(() => ({
-    googleMapsApiKey: "AIzaSyC-hVQKjNv0wcLN-e1F1rGrseh7KduRVdU",
-    libraries,
-  }), [libraries]);
+  const loaderOptions = useMemo(
+    () => ({
+      googleMapsApiKey: "AIzaSyC-hVQKjNv0wcLN-e1F1rGrseh7KduRVdU",
+      libraries,
+    }),
+    [libraries]
+  );
 
   const { isLoaded } = useJsApiLoader(loaderOptions);
 
@@ -100,15 +103,46 @@ const SearchAddress = () => {
   };
 
   const handleDateTimeChange = async (index, field, value) => {
-    const newDateTimeFields = [...dateTimeFields];
-    newDateTimeFields[index][field] = value;
-    setDateTimeFields(newDateTimeFields);
+    console.log("handleDateTimeChange:", index, field, value, [...dateTimeFields]);
+    const newDateTimeFields = [...dateTimeFields]; // add old datetimeFields
+    newDateTimeFields[index][field] = value; //{date:   time: } push date or time
+    setDateTimeFields(newDateTimeFields); // setDateTimeFields
+
+    const getCloseInterval = function (time, intervalArray) {
+      let index = 0;
+
+      const hour = +time.split(":")[0];
+
+      console.log("h:", hour);
+
+      //02:23 [0,6,18]                       0<2 && 6>2
+
+      index = intervalArray.find((interval, index, array) => {
+        console.log("last:", array.length === index + 1 ? 24 : index + 1);
+
+        if (array.length === index + 1) {
+          //last index
+          return index;
+        }
+
+        return interval <= hour && array[index + 1] > hour;
+      });
+
+      return index.toString().padStart(2, "0") + ":00:00Z";
+    };
 
     if (newDateTimeFields[index].date && newDateTimeFields[index].time) {
       try {
         const weatherTimeseries = await fetchWeatherData(center.lat, center.lng);
-        const selectedDateTime = `${newDateTimeFields[index].date}T${newDateTimeFields[index].time}:00Z`;
-        const weather = weatherTimeseries.find(item => item.time === selectedDateTime);
+
+        const timeInterval = [0, 6, 18];
+
+        const timeFormat = getCloseInterval(newDateTimeFields[index].time, timeInterval);
+
+        const selectedDateTime = `${newDateTimeFields[index].date}T${timeFormat}`;
+        const weather = weatherTimeseries.find((item) => item.time === selectedDateTime);
+
+        console.log("find output weather by datetime:", selectedDateTime, weather);
 
         if (weather) {
           const updatedWeatherData = [...weatherData];
@@ -122,15 +156,16 @@ const SearchAddress = () => {
               relative_humidity: weather.data.instant.details.relative_humidity,
               wind_direction: weather.data.instant.details.wind_from_direction,
               wind_speed: weather.data.instant.details.wind_speed,
-              icon: weather.data.next_1_hours?.summary.symbol_code || 'default_icon',
+              icon: weather.data.next_1_hours?.summary.symbol_code || "default_icon",
             },
           };
+          console.log("orginal output:---", updatedWeatherData);
           setWeatherData(updatedWeatherData);
         } else {
-          console.error('Weather data not available for date:', selectedDateTime);
+          console.error("Weather data not available for date:", selectedDateTime);
         }
       } catch (error) {
-        console.error('Error fetching weather data:', error);
+        console.error("Error fetching weather data:", error);
       }
     } else {
       const updatedWeatherData = [...weatherData];
@@ -190,71 +225,87 @@ const SearchAddress = () => {
           <span style={{ fontWeight: "900", fontSize: "25px" }}>Step 1</span> Select Address
         </Typography>
         <Box
-  p={2}
-  sx={{
-    border: "1px solid #fff",
-    width: "100%",
-    backgroundColor: "#17C1E8",
-    borderRadius: "10px",
-  }}
->
-  <Typography color="#fff" variant="body2">
-    <span style={{ fontWeight: "800" }}>Deliver to</span> {address}
-  </Typography>
-  {weatherData && dateTimeFields && dateTimeFields.map((field, index) => {
-    if (!field.date || !field.time) {
-      return null;
-    }
+          p={2}
+          sx={{
+            border: "1px solid #fff",
+            width: "100%",
+            backgroundColor: "#17C1E8",
+            borderRadius: "10px",
+          }}
+        >
+          <Typography color="#fff" variant="body2">
+            <span style={{ fontWeight: "800" }}>Deliver to</span> {address}
+          </Typography>
+          {weatherData &&
+            dateTimeFields &&
+            dateTimeFields.map((field, index) => {
+              if (!field.date || !field.time) {
+                return null;
+              }
 
-    const weatherForDate = weatherData[index]?.weather || {};
+              const weatherForDate = weatherData[index]?.weather || {};
 
-    if (!weatherForDate || Object.keys(weatherForDate).length === 0) {
-      return (
-        <Typography key={index} color="#fff" variant="body2" mt={2}>
-          Weather data not available for {field.date}, {field.time}
-        </Typography>
-      );
-    }
+              console.log("weatherForDate:", weatherForDate);
 
-    return (
-      <Box key={index} color="#fff" mt={2} p={2} bgcolor="#333" borderRadius={4}>
-        <Typography variant="body2">
-          On {field.date}, {field.time}
-        </Typography>
-        <Grid container spacing={2} alignItems="center">
-          <Grid item>
-            {weatherForDate.icon && (
-              <Avatar
-                src={`https://api.met.no/images/weathericons/svg/${weatherForDate.icon}.svg`}
-                alt="Weather Icon"
-                sx={{ width: 24, height: 24 }}
-              />
-            )}
-          </Grid>
-          <Grid item>
-            <Typography variant="body2">Temperature: {weatherForDate.temperature}°C</Typography>
-          </Grid>
-          <Grid item>
-            <Typography variant="body2">Air Pressure: {weatherForDate.air_pressure} hPa</Typography>
-          </Grid>
-          <Grid item>
-            <Typography variant="body2">Cloud Area Fraction: {weatherForDate.cloud_area_fraction}%</Typography>
-          </Grid>
-          <Grid item>
-            <Typography variant="body2">Relative Humidity: {weatherForDate.relative_humidity}%</Typography>
-          </Grid>
-          <Grid item>
-            <Typography variant="body2">Wind Direction: {weatherForDate.wind_direction}°</Typography>
-          </Grid>
-          <Grid item>
-            <Typography variant="body2">Wind Speed: {weatherForDate.wind_speed} m/s</Typography>
-          </Grid>
-        </Grid>
-      </Box>
-    );
-  })}
-</Box>;
+              if (!weatherForDate || Object.keys(weatherForDate).length === 0) {
+                return (
+                  <Typography key={index} color="#fff" variant="body2" mt={2}>
+                    Weather data not available for {field.date}, {field.time}
+                  </Typography>
+                );
+              }
 
+              return (
+                <Box key={index} color="#fff" mt={2} p={2} bgcolor="#333" borderRadius={4}>
+                  <Typography variant="body2">
+                    On {field.date}, {field.time}
+                  </Typography>
+                  <Grid container spacing={2} alignItems="center">
+                    <Grid item>
+                      {weatherForDate.icon && (
+                        <Avatar
+                          src={`https://api.met.no/images/weathericons/svg/${weatherForDate.icon}.svg`}
+                          alt="Weather Icon"
+                          sx={{ width: 24, height: 24 }}
+                        />
+                      )}
+                    </Grid>
+                    <Grid item>
+                      <Typography variant="body2">
+                        Temperature: {weatherForDate.temperature}°C
+                      </Typography>
+                    </Grid>
+                    <Grid item>
+                      <Typography variant="body2">
+                        Air Pressure: {weatherForDate.air_pressure} hPa
+                      </Typography>
+                    </Grid>
+                    <Grid item>
+                      <Typography variant="body2">
+                        Cloud Area Fraction: {weatherForDate.cloud_area_fraction}%
+                      </Typography>
+                    </Grid>
+                    <Grid item>
+                      <Typography variant="body2">
+                        Relative Humidity: {weatherForDate.relative_humidity}%
+                      </Typography>
+                    </Grid>
+                    <Grid item>
+                      <Typography variant="body2">
+                        Wind Direction: {weatherForDate.wind_direction}°
+                      </Typography>
+                    </Grid>
+                    <Grid item>
+                      <Typography variant="body2">
+                        Wind Speed: {weatherForDate.wind_speed} m/s
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                </Box>
+              );
+            })}
+        </Box>
+        ;
       </Grid>
     </Box>
   );
@@ -282,7 +333,13 @@ const SearchAddress = () => {
                     onChange={(e) => setAddress(e.target.value)}
                     size="large"
                     icon={{
-                      component: !address ? "search" : <Box sx={{ cursor: "pointer" }}>{address && <ClearIcon onClick={handleClear} />}</Box>,
+                      component: !address ? (
+                        "search"
+                      ) : (
+                        <Box sx={{ cursor: "pointer" }}>
+                          {address && <ClearIcon onClick={handleClear} />}
+                        </Box>
+                      ),
                       direction: "right",
                     }}
                     sx={{ width: "100%" }} // Ensure the input field takes 100% width
@@ -294,7 +351,12 @@ const SearchAddress = () => {
 
           {showMap && (
             <Box mt={3}>
-              <GoogleMap mapContainerStyle={containerStyle} center={center} zoom={10} onLoad={onMapLoad}>
+              <GoogleMap
+                mapContainerStyle={containerStyle}
+                center={center}
+                zoom={10}
+                onLoad={onMapLoad}
+              >
                 <Marker position={markerPosition} />
               </GoogleMap>
               <SoftBox py={2} sx={{ color: "info.main" }}>
@@ -319,7 +381,11 @@ const SearchAddress = () => {
                   <Avatar sx={{ color: "#fff", bgcolor: "#17c1e8", width: "30px", height: "30px" }}>
                     <EventIcon />
                   </Avatar>
-                  <Typography fontSize="1rem" sx={{ textTransform: "capitalize", color: "#000" }} variant="h5">
+                  <Typography
+                    fontSize="1rem"
+                    sx={{ textTransform: "capitalize", color: "#000" }}
+                    variant="h5"
+                  >
                     Choose Date & Time
                   </Typography>
                   <FormControlLabel
@@ -459,11 +525,13 @@ const SearchAddress = () => {
                             sx={{ display: "flex", alignItems: "center", gap: "10px" }}
                           >
                             {weatherData[index]?.weather?.icon && (
-                              <Avatar src={`https://api.met.no/images/weathericons/svg/${weatherData[index].weather.icon}.svg`} alt="Weather Icon" sx={{ width: 24, height: 24 }} />
+                              <Avatar
+                                src={`https://api.met.no/images/weathericons/svg/${weatherData[index].weather.icon}.svg`}
+                                alt="Weather Icon"
+                                sx={{ width: 24, height: 24 }}
+                              />
                             )}
-                            <span>
-                              Temperature: {weatherData[index].weather.temperature}°C
-                            </span>
+                            <span>Temperature: {weatherData[index].weather.temperature}°C</span>
                             <span style={{ marginLeft: "10px" }}>
                               Air Pressure: {weatherData[index].weather.air_pressure} hPa
                             </span>

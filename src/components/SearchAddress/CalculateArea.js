@@ -296,7 +296,7 @@ const CalculateArea = () => {
                     <Typography variant="body2">Relative Humidity: {weatherData[index]?.weather?.relative_humidity}%</Typography>
                   </Grid>
                   <Grid item>
-                    <Typography variant="body2">Wind Direction: {weatherData[index]?.weather?.wind_direction}°</Typography>
+                    <Typography variant="body2">Wind Direction: {weatherData[index]?.weather?.wind_from_direction}°</Typography>
                   </Grid>
                   <Grid item>
                     <Typography variant="body2">Wind Speed: {weatherData[index]?.weather?.wind_speed} m/s</Typography>
