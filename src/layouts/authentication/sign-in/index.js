@@ -48,6 +48,9 @@ function LogIn() {
     try {
       const user = await login(data);
       console.log("Logged in user:", user);
+      if(!user.status){
+        throw new Error(user.message);
+      }
       localStorage.setItem("role", "admin");
       navigate("/dashboard");
  
