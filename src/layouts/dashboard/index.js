@@ -13,6 +13,8 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
+import React from "react";
+
 // @mui material components
 import Grid from "@mui/material/Grid";
 import Icon from "@mui/material/Icon";
@@ -42,9 +44,34 @@ import OrderOverview from "layouts/dashboard/components/OrderOverview";
 import reportsBarChartData from "layouts/dashboard/data/reportsBarChartData";
 import gradientLineChartData from "layouts/dashboard/data/gradientLineChartData";
 
+//api data fetch
+import { getDashboardStatistic } from "api/apiService";
+
+// mui skeltons
+import Box from "@mui/material/Box";
+import Skeleton from "@mui/material/Skeleton";
+
 function Dashboard() {
   const { size } = typography;
   const { chart, items } = reportsBarChartData;
+
+  const [totalOrders, setTotalOrders] = React.useState(0);
+  const [isLoading, setIsLoading] = React.useState(true);
+
+  const showStatistic = async () => {
+    const data = await getDashboardStatistic({ limit: 1000, page_number: 1 });
+
+    if (data.status) {
+      setTotalOrders(data.totalOrders);
+
+      console.log("set dashboard statistic", data);
+      setIsLoading(false);
+    }
+  };
+
+  React.useEffect(() => {
+    showStatistic();
+  }, []);
 
   return (
     <DashboardLayout>
@@ -53,12 +80,19 @@ function Dashboard() {
         <SoftBox mb={3}>
           <Grid container spacing={3}>
             <Grid item xs={12} sm={6} xl={3}>
-              <MiniStatisticsCard
-                title={{ text: "Week's revenue " }}
-                count="$53,000"
-                percentage={{ color: "success", text: "+55%" }}
-                icon={{ color: "info", component: "paid" }}
-              />
+              {isLoading ? (
+                <SoftBox >
+
+                  <Skeleton sx={{height:"100%",padding:3}} animation="wave" />
+                </SoftBox>
+              ) : (
+                <MiniStatisticsCard
+                  title={{ text: "Total Order" }}
+                  count={totalOrders}
+                  // percentage={{ color: "success", text: "+55%" }}
+                  icon={{ color: "info", component: "paid" }}
+                />
+              )}
             </Grid>
             <Grid item xs={12} sm={6} xl={3}>
               <MiniStatisticsCard

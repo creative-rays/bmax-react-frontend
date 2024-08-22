@@ -26,12 +26,12 @@ import Tab from "@mui/material/Tab";
 import SoftBox from "components/SoftBox";
 import SoftTypography from "components/SoftTypography";
 import SoftAvatar from "components/SoftAvatar";
-import LocalShippingIcon from '@mui/icons-material/LocalShipping';
+import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 // Soft UI Dashboard React examples
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 //mui icons
-import FireTruckIcon from '@mui/icons-material/FireTruck';
-import ThermostatIcon from '@mui/icons-material/Thermostat';
+import FireTruckIcon from "@mui/icons-material/FireTruck";
+import ThermostatIcon from "@mui/icons-material/Thermostat";
 // Soft UI Dashboard React icons
 import Cube from "examples/Icons/Cube";
 import Document from "examples/Icons/Document";
@@ -46,10 +46,14 @@ import curved0 from "assets/images/curved-images/curved0.jpg";
 import MyGoogleMap from "layouts/dashboard/components/ForProjects/OrderDetails/GoogleMap";
 import { Message } from "@mui/icons-material";
 
-function Header() {
+import PropTypes from "prop-types";
+
+//mui
+import Skeleton from "@mui/material/Skeleton";
+
+function Header({ isLoading,fullName,role }) {
   const [tabsOrientation, setTabsOrientation] = useState("horizontal");
   const [tabValue, setTabValue] = useState(0);
-
 
   useEffect(() => {
     // A function that sets the orientation state of the tabs.
@@ -92,9 +96,7 @@ function Header() {
           backgroundPosition: "50%",
           overflow: "hidden",
         }}
-      >
-     
-      </SoftBox>
+      ></SoftBox>
       <Card
         sx={{
           width: "97%",
@@ -109,45 +111,54 @@ function Header() {
           px: 2,
         }}
       >
-        <Grid container spacing={3} alignItems="center">
-          <Grid item>
-            <SoftAvatar
-              src={burceMars}
-              alt="profile-image"
-              variant="rounded"
-              size="xl"
-              shadow="sm"
-            />
+        {isLoading ? (
+          <Skeleton animation="wave" />
+        ) : (
+          <Grid container spacing={3} alignItems="center">
+            <Grid item>
+              <SoftAvatar
+                src={burceMars}
+                alt="profile-image"
+                variant="rounded"
+                size="xl"
+                shadow="sm"
+              />
+            </Grid>
+            <Grid item>
+              <SoftBox height="100%" mt={0.5} lineHeight={1}>
+                <SoftTypography variant="h5" fontWeight="medium">
+                  {fullName}
+                </SoftTypography>
+                <SoftTypography variant="button" color="text" fontWeight="medium">
+                  {role}
+                </SoftTypography>
+              </SoftBox>
+            </Grid>
+            <Grid item xs={12} md={6} lg={4} sx={{ ml: "auto" }}>
+              <AppBar position="static">
+                <Tabs
+                  orientation={tabsOrientation}
+                  value={tabValue}
+                  onChange={handleSetTabValue}
+                  sx={{ background: "transparent" }}
+                >
+                  <Tab label="App" icon={<Cube />} />
+                  <Tab label="Message" icon={<Document />} />
+                  <Tab label="Setting" icon={<Settings />} />
+                </Tabs>
+              </AppBar>
+            </Grid>
           </Grid>
-          <Grid item>
-            <SoftBox height="100%" mt={0.5} lineHeight={1}>
-              <SoftTypography variant="h5" fontWeight="medium">
-              Alex Thompson
-              </SoftTypography>
-              <SoftTypography variant="button" color="text" fontWeight="medium">
-              CEO / Co-Founder
-
-              </SoftTypography>
-            </SoftBox>
-          </Grid>
-          <Grid item xs={12} md={6} lg={4} sx={{ ml: "auto" }}>
-            <AppBar position="static">
-              <Tabs
-                orientation={tabsOrientation}
-                value={tabValue}
-                onChange={handleSetTabValue}
-                sx={{ background: "transparent" }}
-              >
-                <Tab label="App" icon={<Cube />} />
-                <Tab label="Message" icon={<Document />} />
-                <Tab label="Setting" icon={<Settings />} />
-              </Tabs>
-            </AppBar>
-          </Grid>
-        </Grid>
+        )}
       </Card>
     </SoftBox>
   );
 }
+
+Header.propTypes = {
+  isLoading: PropTypes.bool.isRequired,
+  fullName: PropTypes.string.isRequired,
+  role: PropTypes.string.isRequired,
+};
 
 export default Header;

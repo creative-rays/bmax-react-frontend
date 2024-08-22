@@ -13,6 +13,9 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
+//react
+import React from "react";
+
 // @mui material components
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
@@ -50,26 +53,41 @@ import team2 from "assets/images/team-2.jpg";
 import team3 from "assets/images/team-3.jpg";
 import team4 from "assets/images/team-4.jpg";
 
-
+//mui
+import Skeleton from "@mui/material/Skeleton";
 
 function Overview() {
+  const [fullName, setFullName] = React.useState("");
+  const [role, setRoll] = React.useState("");
+  const [isLoading, setIsLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    const currentRole = localStorage.getItem("role");
+
+    if (user) {
+      setFullName(user.fullName);
+      setRoll(currentRole);
+
+      console.log("fullName:", fullName, user);
+      setIsLoading(false);
+    }
+  }, []);
+
   return (
     <DashboardLayout>
-      <Header />
+      <Header isLoading={isLoading} fullName={fullName} role={role} />
       <SoftBox mt={5} mb={3}>
         <Grid container spacing={3}>
           <Grid item xs={12} md={12} xl={4}>
             <PlatformSettings />
-          
-
           </Grid>
           <Grid item xs={12} md={6} xl={4}>
-
             <ProfileInfoCard
               title="profile information"
               description="Hi, I’m Alec Thompson, Decisions: If you can’t decide, the answer is no. If two equally difficult paths, choose the one more painful in the short term (pain avoidance is creating an illusion of equality)."
               info={{
-                fullName: "Alec M. Thompson",
+                fullName: `k ${fullName}`,
                 mobile: "(44) 123 1234 123",
                 email: "alecthompson@mail.com",
                 location: "USA",

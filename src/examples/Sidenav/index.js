@@ -74,14 +74,14 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
   const renderRoutes = routes.map(({ type, name, icon, title, noCollapse, key, route, href }) => {
     let returnValue;
 
-    if(localStorage.getItem("role") == "vendor"){
-      const routesToShow = ["/profile","/login","/projects","/dashboard",,"/tables","/logout" ]
-      if(!routesToShow.includes(route)){
+    // if(localStorage.getItem("role") == "vendor"){
+    //   const routesToShow = ["/profile","/login","/projects","/dashboard","/tables","/logout" ]
+    //   if(!routesToShow.includes(route)){
         
-        return;
-      }
+    //     return;
+    //   }
       
-    }
+    // }
     if (type === "collapse") {
       returnValue = href ? (
         <Link

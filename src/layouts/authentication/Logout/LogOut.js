@@ -2,15 +2,17 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SoftBox from 'components/SoftBox';
 import SoftTypography from 'components/SoftTypography';
+import {logout} from "api/authApi"
 
 const LogOut = () => {
   const navigate = useNavigate();
 
+
+  
   useEffect(() => {
-    // Clear the localStorage
-    localStorage.removeItem("role");
-    localStorage.removeItem("vendorRole");
-    localStorage.removeItem("mytoken");
+    
+    logout()
+
     
     // Redirect to login page
     navigate("/authentication/log-in");

@@ -156,10 +156,14 @@ const SearchAddress = () => {
               relative_humidity: weather.data.instant.details.relative_humidity,
               wind_direction: weather.data.instant.details.wind_from_direction,
               wind_speed: weather.data.instant.details.wind_speed,
-              icon: weather.data.next_1_hours?.summary.symbol_code || "default_icon",
+              icon:
+                weather.data.next_1_hours?.summary.symbol_code ||
+                weather.data.next_6_hours?.summary.symbol_code ||
+                weather.data.next_12_hours?.summary.symbol_code ||
+                "default_icon",
             },
           };
-          console.log("orginal output:---", updatedWeatherData);
+          console.log("orginal output:---", updatedWeatherData, weather);
           setWeatherData(updatedWeatherData);
         } else {
           console.error("Weather data not available for date:", selectedDateTime);
@@ -171,6 +175,17 @@ const SearchAddress = () => {
       const updatedWeatherData = [...weatherData];
       updatedWeatherData[index] = null;
       setWeatherData(updatedWeatherData);
+    }
+  };
+
+  const handleDateValidation = (e) => {
+    const selectedDate = e.target.value;
+    console.log("handle blur", selectedDate);
+    // Check if the selected date is within the allowed range
+    if (selectedDate < currentDate || selectedDate > formattedMaxDate) {
+      alert(`Please select a date between ${currentDate} and ${formattedMaxDate}.`);
+      e.target.value = currentDate; // Reset the date to a valid value
+      // handleDateTimeChange(index, "date", currentDate);
     }
   };
 
@@ -310,6 +325,14 @@ const SearchAddress = () => {
     </Box>
   );
 
+  // Get the current date
+  const currentDate = new Date().toISOString().split("T")[0];
+
+  // Calculate the max date (9 days from the current date)
+  const maxDate = new Date();
+  maxDate.setDate(maxDate.getDate() + 9);
+  const formattedMaxDate = maxDate.toISOString().split("T")[0];
+
   return isLoaded ? (
     <DefaultLayout extraContent={extraContent}>
       <Grid container spacing={2} gap={2}>
@@ -435,6 +458,8 @@ const SearchAddress = () => {
                               size="large"
                               type="date"
                               value={field.date}
+                              onBlur={handleDateValidation}
+                              onClick={() => console.log("on click")}
                               onChange={(e) => handleDateTimeChange(index, "date", e.target.value)}
                               InputLabelProps={{
                                 shrink: true,
@@ -446,6 +471,10 @@ const SearchAddress = () => {
                                   </Box>
                                 ),
                                 direction: "left",
+                              }}
+                              inputProps={{
+                                min: currentDate,
+                                max: formattedMaxDate,
                               }}
                             />
                           </Grid>

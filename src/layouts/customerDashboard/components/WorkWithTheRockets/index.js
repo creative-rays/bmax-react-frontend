@@ -46,13 +46,13 @@ function WorkWithTheRockets() {
         >
           <SoftBox mb={3} pt={1}>
             <SoftTypography variant="h5" color="white" fontWeight="bold">
-              العمل مع الصواريخ
+              Work with the rockets
             </SoftTypography>
           </SoftBox>
           <SoftBox mb={2}>
-            <SoftTypography variant="body2" color="white" fontWeight="bold">
-              تكوين الثروة هو لعبة تطوري حديثة ذات حصيلة إيجابية. الأمر كله يتعلق بمن يغتنم الفرصة
-              أولاً هذه بطاقة بسيطة.
+            <SoftTypography variant="body2" color="white">
+              Wealth creation is an evolutionarily recent positive-sum game. It is all about who
+              take the opportunity first.
             </SoftTypography>
           </SoftBox>
           <SoftTypography
@@ -60,7 +60,7 @@ function WorkWithTheRockets() {
             href="#"
             variant="button"
             color="white"
-            fontWeight="bold"
+            fontWeight="medium"
             sx={{
               mt: "auto",
               mr: "auto",
@@ -79,8 +79,8 @@ function WorkWithTheRockets() {
               },
             }}
           >
-            اقرأ المستندات
-            <Icon sx={{ fontWeight: "bold" }}>arrow_backward</Icon>
+            Read More
+            <Icon sx={{ fontWeight: "bold" }}>arrow_forward</Icon>
           </SoftTypography>
         </SoftBox>
       </SoftBox>

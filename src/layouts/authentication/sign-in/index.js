@@ -31,14 +31,8 @@ function LogIn() {
   console.log(vendorPassword);
   const handleSignIn = async (event) => {
     event.preventDefault();
-    // const adminEmail = process.env.REACT_APP_ADMIN_EMAIL;
-    // const adminPassword = process.env.REACT_APP_ADMIN_PASSWORD;
-    // const vendorEmail = process.env.REACT_APP_VENDOR_EMAIL;
-    // const vendorPassword = process.env.REACT_APP_VENDOR_PASSWORD;
-    // console.log(vendorPassword);
 
-    // console.log("credential admin:", adminEmail, email, adminPassword, password);
-    console.log("credential admin:", email, password);
+    console.log("credential input:", email, password);
     const data = {
       action: "login",
       username: email,
@@ -47,13 +41,15 @@ function LogIn() {
 
     try {
       const user = await login(data);
-      console.log("Logged in user:", user);
-      if(!user.status){
+      console.log("Logged in user response:", user);
+      if (!user.status) {
         throw new Error(user.message);
       }
-      localStorage.setItem("role", "admin");
+
       navigate("/dashboard");
- 
+      // if (user.role === "customer") {
+      // }
+      // localStorage.setItem("role", "admin");
     } catch (err) {
       // setError(err.message);
       console.log("error in login:", err);

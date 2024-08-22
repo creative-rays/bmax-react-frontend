@@ -30,30 +30,8 @@ import Table from "examples/Tables/Table";
 import ProTableData from "./ProTableData";
 import projectsTableData from "layouts/tables/data/projectsTableData";
 
-import { getOrders } from "api/apiService";
-import { useEffect, useState } from "react";
-
 function ProTablesMain() {
-  const [orderData, setOrderData] = useState({});
-
-  const showTable = async () => {
-    const data = await getOrders({ limit: 5, page_number: 1 });
-
-    if (data.status) {
-      const { columns, rows } = ProTableData(data.data);
-      setOrderData({ columns, rows });
-
-      // console.log("set data", orderData, data.data);
-    }
-
-    console.log("data order fetch: ", data);
-  };
-
-  useEffect(() => {
-    showTable();
-  }, []);
-
-  // const { columns, rows } = ProTableData(orderData);
+  const { columns, rows } = ProTableData;
 
   const { columns: prCols, rows: prRows } = projectsTableData;
 
@@ -76,10 +54,11 @@ function ProTablesMain() {
                 },
               }}
             >
-              <Table columns={orderData.columns} rows={orderData.rows} />
+              <Table columns={columns} rows={rows} />
             </SoftBox>
           </Card>
         </SoftBox>
+    
       </SoftBox>
       {/* <Footer /> */}
     </DashboardLayout>

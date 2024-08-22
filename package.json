@@ -8,7 +8,9 @@
     "url": "https://github.com/creativetimofficial/soft-ui-dashboard-react/issues"
   },
   "options": {
-    "allowedHosts": ["https://swapit.codemelodies.com"],
+    "allowedHosts": [
+      "https://swapit.codemelodies.com"
+    ],
     "proxy": "https://swapit.codemelodies.com"
   },
   "repository": {

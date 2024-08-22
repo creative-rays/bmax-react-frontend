@@ -47,16 +47,16 @@ export default function data() {
 
   return {
     columns: [
-      { name: "المشروع", align: "left" },
-      { name: "أعضاء", align: "left" },
-      { name: "ميزانية", align: "center" },
-      { name: "إكمال", align: "center" },
+      { name: "companies", align: "left" },
+      { name: "members", align: "left" },
+      { name: "budget", align: "center" },
+      { name: "completion", align: "center" },
     ],
 
     rows: [
       {
-        المشروع: [logoXD, "Soft UI XD الإصدار"],
-        أعضاء: (
+        companies: [logoXD, "Soft UI XD Version"],
+        members: (
           <SoftBox display="flex" py={1}>
             {avatars([
               [team1, "Ryan Tompson"],
@@ -66,20 +66,20 @@ export default function data() {
             ])}
           </SoftBox>
         ),
-        ميزانية: (
+        budget: (
           <SoftTypography variant="caption" color="text" fontWeight="medium">
             $14,000
           </SoftTypography>
         ),
-        إكمال: (
+        completion: (
           <SoftBox width="8rem" textAlign="left">
             <SoftProgress value={60} color="info" variant="gradient" label={false} />
           </SoftBox>
         ),
       },
       {
-        المشروع: [logoAtlassian, "أضف مسار التقدم إلى التطبيق الداخلي"],
-        أعضاء: (
+        companies: [logoAtlassian, "Add Progress Track"],
+        members: (
           <SoftBox display="flex" py={1}>
             {avatars([
               [team2, "Romina Hadid"],
@@ -87,20 +87,20 @@ export default function data() {
             ])}
           </SoftBox>
         ),
-        ميزانية: (
+        budget: (
           <SoftTypography variant="caption" color="text" fontWeight="medium">
             $3,000
           </SoftTypography>
         ),
-        إكمال: (
+        completion: (
           <SoftBox width="8rem" textAlign="left">
             <SoftProgress value={10} color="info" variant="gradient" label={false} />
           </SoftBox>
         ),
       },
       {
-        المشروع: [logoSlack, "إصلاح أخطاء النظام الأساسي"],
-        أعضاء: (
+        companies: [logoSlack, "Fix Platform Errors"],
+        members: (
           <SoftBox display="flex" py={1}>
             {avatars([
               [team1, "Ryan Tompson"],
@@ -108,20 +108,20 @@ export default function data() {
             ])}
           </SoftBox>
         ),
-        ميزانية: (
+        budget: (
           <SoftTypography variant="caption" color="text" fontWeight="medium">
             Not set
           </SoftTypography>
         ),
-        إكمال: (
+        completion: (
           <SoftBox width="8rem" textAlign="left">
             <SoftProgress value={100} color="success" variant="gradient" label={false} />
           </SoftBox>
         ),
       },
       {
-        المشروع: [logoSpotify, "إطلاق تطبيق الهاتف المحمول الخاص بنا"],
-        أعضاء: (
+        companies: [logoSpotify, "Launch our Mobile App"],
+        members: (
           <SoftBox display="flex" py={1}>
             {avatars([
               [team4, "Jessica Doe"],
@@ -131,38 +131,38 @@ export default function data() {
             ])}
           </SoftBox>
         ),
-        ميزانية: (
+        budget: (
           <SoftTypography variant="caption" color="text" fontWeight="medium">
             $20,500
           </SoftTypography>
         ),
-        إكمال: (
+        completion: (
           <SoftBox width="8rem" textAlign="left">
             <SoftProgress value={100} color="success" variant="gradient" label={false} />
           </SoftBox>
         ),
       },
       {
-        المشروع: [logoJira, "أضف صفحة التسعير الجديدة"],
-        أعضاء: (
+        companies: [logoJira, "Add the New Pricing Page"],
+        members: (
           <SoftBox display="flex" py={1}>
             {avatars([[team4, "Jessica Doe"]])}
           </SoftBox>
         ),
-        ميزانية: (
+        budget: (
           <SoftTypography variant="caption" color="text" fontWeight="medium">
             $500
           </SoftTypography>
         ),
-        إكمال: (
+        completion: (
           <SoftBox width="8rem" textAlign="left">
             <SoftProgress value={25} color="info" variant="gradient" label={false} />
           </SoftBox>
         ),
       },
       {
-        المشروع: [logoInvesion, "إعادة تصميم متجر جديد على الإنترنت"],
-        أعضاء: (
+        companies: [logoInvesion, "Redesign New Online Shop"],
+        members: (
           <SoftBox display="flex" py={1}>
             {avatars([
               [team1, "Ryan Tompson"],
@@ -170,12 +170,12 @@ export default function data() {
             ])}
           </SoftBox>
         ),
-        ميزانية: (
+        budget: (
           <SoftTypography variant="caption" color="text" fontWeight="medium">
             $2,000
           </SoftTypography>
         ),
-        إكمال: (
+        completion: (
           <SoftBox width="8rem" textAlign="left">
             <SoftProgress value={40} color="info" variant="gradient" label={false} />
           </SoftBox>

@@ -34,16 +34,17 @@ function BuildByDevelopers() {
           <Grid item xs={12} lg={6}>
             <SoftBox display="flex" flexDirection="column" height="100%">
               <SoftBox pt={1} mb={0.5}>
-                <SoftTypography variant="body2" color="text" fontWeight="bold">
-                  بناها المطورون
+                <SoftTypography variant="body2" color="text" fontWeight="medium">
+                  Build by developers
                 </SoftTypography>
               </SoftBox>
               <SoftTypography variant="h5" fontWeight="bold" gutterBottom>
                 Soft UI Dashboard
               </SoftTypography>
               <SoftBox mb={6}>
-                <SoftTypography variant="body2" color="text" fontWeight="bold">
-                  من الألوان والبطاقات والطباعة إلى العناصر المعقدة ، ستجد الوثائق الكاملة.
+                <SoftTypography variant="body2" color="text">
+                  From colors, cards, typography to complex elements, you will find the full
+                  documentation.
                 </SoftTypography>
               </SoftBox>
               <SoftTypography
@@ -51,7 +52,7 @@ function BuildByDevelopers() {
                 href="#"
                 variant="button"
                 color="text"
-                fontWeight="bold"
+                fontWeight="medium"
                 sx={{
                   mt: "auto",
                   mr: "auto",
@@ -70,8 +71,8 @@ function BuildByDevelopers() {
                   },
                 }}
               >
-                اقرأ المستندات
-                <Icon sx={{ fontWeight: "bold" }}>arrow_backward</Icon>
+                Read More
+                <Icon sx={{ fontWeight: "bold" }}>arrow_forward</Icon>
               </SoftTypography>
             </SoftBox>
           </Grid>

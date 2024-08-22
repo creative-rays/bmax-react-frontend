@@ -37,13 +37,11 @@ Coded by www.creative-tim.com
 
 // Soft UI Dashboard React layouts
 import Dashboard from "layouts/dashboard";
+import CustomerDashboard from "layouts/customerDashboard";
 import Tables from "layouts/tables";
 import Billing from "layouts/billing";
-import VirtualReality from "layouts/virtual-reality";
-import RTL from "layouts/rtl";
 import Profile from "layouts/profile";
 // import SignIn from "layouts/authentication/sign-in";
-import SignUp from "layouts/authentication/sign-up";
 
 // Soft UI Dashboard React icons
 import Shop from "examples/Icons/Shop";
@@ -64,14 +62,39 @@ import LogOut from "layouts/authentication/Logout/LogOut";
 import ProtectedRoute from "proctectedRoute/ProtectedRoute";
 import ProTablesMain from "layouts/dashboard/components/ProjectTable";
 import UserMangemntTable from "layouts/dashboard/components/UserMgtData";
+import SearchAddress from "components/SearchAddress";
+
 const routes = [
   {
     type: "collapse",
     name: "Dashboard",
     key: "dashboard",
     route: "/dashboard",
-    icon: <Shop size="12px" />,
-    component: <Dashboard/> ,
+    icon: <CustomerSupport size="12px" />,
+    component: (
+      <ProtectedRoute allowedRoles={["admin", "customer", "vendor"]} element={<Dashboard />} />
+    ),
+    noCollapse: true,
+  },
+  {
+    type: "collapse",
+    name: "Orders",
+    key: "projects",
+    route: "/projects",
+    icon: <ProjectIcon size="12px" />,
+    component: (
+      <ProtectedRoute allowedRoles={["admin", "customer", "vendor"]} element={<ProTablesMain />} />
+    ),
+    noCollapse: true,
+  },
+  {
+    type: "collapse",
+    name: "New Order",
+    key: "New Order",
+    route: "/search-address",
+    icon: <CustomerSupport size="12px" />,
+    component: <SearchAddress />,
+    // component: <AdminProtectedRoute element={<UserMangemntTable />} />,
     noCollapse: true,
   },
   // {
@@ -83,73 +106,44 @@ const routes = [
   //   component:<AdminProtectedRoute element={<UserMgt/>} /> ,
   //   noCollapse: true,
   // },
-  {
-    type: "collapse",
-    name: "User Management table",
-    key: "user mangement",
-    route: "/user-management-table",
-    icon: <CustomerSupport size="12px" />,
-    component:<AdminProtectedRoute element={<UserMangemntTable/>} /> ,
-    noCollapse: true,
-  },
-  {
-    type: "collapse",
-    name: "Projects",
-    key: "projects",
-    route: "/projects",
-    icon: <ProjectIcon   size="12px" />,
-    component: <ProTablesMain/>,
-    noCollapse: true,
-    
-  },
+  // {
+  //   type: "collapse",
+  //   name: "User Management table",
+  //   key: "user mangement",
+  //   route: "/user-management-table",
+  //   icon: <CustomerSupport size="12px" />,
+  //   component: <AdminProtectedRoute element={<UserMangemntTable />} />,
+  //   noCollapse: true,
+  // },
   // {
   //   type: "order details",
   //   name: "Order details",
-  
+
   //   route: "/order-details",
-  
+
   //   component: <OrderDetail/>,
   //   noCollapse: true,
-    
+
   // },
-  {
-    type: "collapse",
-    name: "Tables",
-    key: "tables",
-    route: "/tables",
-    icon: <Office size="12px" />,
-    component: <Tables/>,
-    noCollapse: true,
-  },
-  {
-    type: "collapse",
-    name: "Billing",
-    key: "billing",
-    route: "/billing",
-    icon: <CreditCard size="12px" />,
-    component:<AdminProtectedRoute element={<Billing/>} /> ,
-    noCollapse: true,
-  },
-  {
-    type: "collapse",
-    name: "Virtual Reality",
-    key: "virtual-reality",
-    route: "/virtual-reality",
-    icon: <Cube size="12px" />,
-    component: <VirtualReality />,
-    noCollapse: true,
-  },
-  {
-    type: "collapse",
-    name: "RTL",
-    key: "rtl",
-    route: "/rtl",
-    icon: <Settings size="12px" />,
-    component: <RTL />,
-    noCollapse: true,
-  },
-  
- 
+  // {
+  //   type: "collapse",
+  //   name: "Tables",
+  //   key: "tables",
+  //   route: "/tables",
+  //   icon: <Office size="12px" />,
+  //   component: <Tables />,
+  //   noCollapse: true,
+  // },
+  // {
+  //   type: "collapse",
+
+  //   key: "billing",
+  //   route: "/billing",
+  //   icon: <CreditCard size="12px" />,
+  //   component: <AdminProtectedRoute element={<Billing />} />,
+  //   noCollapse: true,
+  // },
+
   { type: "title", title: "Account Pages", key: "account-pages" },
   {
     type: "collapse",
@@ -157,19 +151,21 @@ const routes = [
     key: "profile",
     route: "/profile",
     icon: <CustomerSupport size="12px" />,
-    component:<ProtectedRoute element={<Profile />} allowedRoles={['admin', 'vendor']} />,
+    component: (
+      <ProtectedRoute element={<Profile />} allowedRoles={["admin", "vendor", "customer"]} />
+    ),
     noCollapse: true,
   },
 
-  {
-    type: "collapse",
-    name: "Log In",
-    key: "log-in",
-    route: "/authentication/log-in",
-    icon: <Document size="12px" />,
-    component: <LogIn/>,
-    noCollapse: true,
-  },
+  // {
+  //   type: "collapse",
+  //   name: "Log In",
+  //   key: "log-in",
+  //   route: "/authentication/log-in",
+  //   icon: <Document size="12px" />,
+  //   component: <LogIn />,
+  //   noCollapse: true,
+  // },
   // {
   //   type: "collapse",
   //   name: "Sign Up",
@@ -185,10 +181,9 @@ const routes = [
     key: "log-out",
     route: "/logout",
     icon: <Document size="12px" />,
-    component: <LogOut/>,
+    component: <LogOut />,
     noCollapse: true,
   },
-  
 ];
 
 export default routes;
