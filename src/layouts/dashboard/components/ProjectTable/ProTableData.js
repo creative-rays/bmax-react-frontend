@@ -168,7 +168,11 @@ const ProTableData = (data) => {
       " ": (
         <SoftBox>
           <Box sx={{ display: "flex", gap: "10px" }}>
-            <Box component={NavLink} to={"/projects/order-details"}>
+            <Box
+              component={NavLink}
+              to={"/projects/order-details"}
+              state={{ orderId: item.order_id }}
+            >
               <SoftButton variant="outlined" color="info" size="small">
                 View
               </SoftButton>
