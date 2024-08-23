@@ -7,37 +7,28 @@ const containerStyle = {
   height: "400px",
   borderRadius: "12px",
   overflow: "hidden",
-
   boxShadow:
     "rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset",
 };
 
-const libraries = ["places"];
+const libraries = ["places", "geometry", "drawing"];
 
 function MyGoogleMap({ lat, lng }) {
-  // const center = {
-  //     lat: -3.745,
-  //     lng: -38.523
-  //   };
-
   const center = React.useMemo(() => ({ lat, lng }), [lat, lng]);
   const [map, setMap] = React.useState(null);
 
   const { isLoaded } = useJsApiLoader({
-    id: "google-map-script",
     googleMapsApiKey: "AIzaSyC-hVQKjNv0wcLN-e1F1rGrseh7KduRVdU",
-    nonce: "map",
-    libraries: ["places", "geometry", "drawing"],
+    libraries,
   });
-  React.useEffect(() => {}, []);
 
   const onLoad = React.useCallback((map) => {
     const bounds = new window.google.maps.LatLngBounds(center);
     map.fitBounds(bounds);
     setMap(map);
-  }, []);
+  }, [center]);
 
-  const onUnmount = React.useCallback((map) => {
+  const onUnmount = React.useCallback(() => {
     setMap(null);
   }, []);
 
