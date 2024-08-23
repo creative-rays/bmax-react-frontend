@@ -26,13 +26,10 @@ function MyGoogleMap({ lat, lng }) {
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
     googleMapsApiKey: "AIzaSyC-hVQKjNv0wcLN-e1F1rGrseh7KduRVdU",
+    nonce: "map",
     libraries: ["places", "geometry", "drawing"],
   });
-  React.useEffect(() => {
-  }, []);
-
-
-
+  React.useEffect(() => {}, []);
 
   const onLoad = React.useCallback((map) => {
     const bounds = new window.google.maps.LatLngBounds(center);

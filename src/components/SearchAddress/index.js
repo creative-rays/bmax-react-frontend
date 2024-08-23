@@ -14,6 +14,9 @@ import AccessTimeFilledIcon from "@mui/icons-material/AccessTimeFilled";
 import EventIcon from "@mui/icons-material/Event";
 import { useGlobalState } from "globalState/globalState";
 import { fetchWeatherData } from "./weatherUtils";
+import DeviceThermostatIcon from "@mui/icons-material/DeviceThermostat";
+import AirIcon from "@mui/icons-material/Air";
+import { GiWindsock } from "react-icons/gi";
 
 const containerStyle = {
   width: "100%",
@@ -271,56 +274,151 @@ const SearchAddress = () => {
               }
 
               return (
-                <Box key={index} color="#fff" mt={2} p={2} bgcolor="#333" borderRadius={4}>
-                  <Typography variant="body2">
-                    On {field.date}, {field.time}
-                  </Typography>
-                  <Grid container spacing={2} alignItems="center">
-                    <Grid item>
-                      {weatherForDate.icon && (
-                        <Avatar
-                          src={`https://api.met.no/images/weathericons/svg/${weatherForDate.icon}.svg`}
-                          alt="Weather Icon"
-                          sx={{ width: 24, height: 24 }}
-                        />
-                      )}
+                <>
+                  <Box key={index} color="#fff" mt={2} p={2} bgcolor="#333" borderRadius={4}>
+                    <Typography variant="body2">
+                      Condition On {field.date}, {field.time}
+                    </Typography>
+                    <Grid container direction="row" p={4} spacing={4} alignItems="center">
+                      <Grid item>
+                        {weatherForDate.icon && (
+                          <Avatar
+                            src={`https://api.met.no/images/weathericons/svg/${weatherForDate.icon}.svg`}
+                            alt="Weather Icon"
+                            sx={{ width: 48, height: 48 }}
+                          />
+                        )}
+                      </Grid>
+                      <Grid item>
+                        <Grid container direction="row" alignItems="center" spacing={1}>
+                          <Grid item>
+                            <DeviceThermostatIcon  fontSize="medium"/>
+                          </Grid>
+                          <Grid item>
+                            <Typography
+                              variant="body2"
+                              fontWeight="semibold"
+                              sx={{ fontSize: "32px" }}
+                            >
+                              {weatherForDate.temperature}°
+                            </Typography>
+                          </Grid>
+                        </Grid>
+                      </Grid>
+                      {/* <Grid item>
+                        <Typography variant="body2">
+                          Air Pressure: {weatherForDate.air_pressure} hPa
+                        </Typography>
+                      </Grid>
+                      <Grid item>
+                        <Typography variant="body2">
+                          Cloud Area Fraction: {weatherForDate.cloud_area_fraction}%
+                        </Typography>
+                      </Grid>
+                      <Grid item>
+                        <Typography variant="body2">
+                          Relative Humidity: {weatherForDate.relative_humidity}%
+                        </Typography>
+                      </Grid> */}
+                      <Grid item>
+                        <Grid container direction="row" alignItems="center" spacing={1}>
+                          <Grid item>
+                            <GiWindsock size="24px" />
+                          </Grid>
+                          <Grid item>
+                            <Typography
+                              variant="body2"
+                              fontWeight="semibold"
+                              sx={{ fontSize: "32px" }}
+                            >
+                              {weatherForDate.wind_direction}°
+                            </Typography>
+                          </Grid>
+                        </Grid>
+                      </Grid>
+                      {/* <Grid item>
+                        <GiWindsock />
+                        <Typography variant="body2">{weatherForDate.wind_direction}°</Typography>
+                      </Grid> */}
+                      <Grid item>
+                        <Grid container direction="row" alignItems="center" spacing={1}>
+                          <Grid item>
+                            <AirIcon fontSize="medium" />
+                          </Grid>
+                          <Grid item>
+                            <Grid container direction="row" alignItems="baseline" spacing={1}>
+                              <Grid item>
+                                <Typography
+                                  variant="body2"
+                                  fontWeight="semibold"
+                                  sx={{ fontSize: "32px" }}
+                                >
+                                  {weatherForDate.wind_speed}
+                                </Typography>
+                              </Grid>
+                              <Grid item>
+                                <Typography variant="body2">m/s</Typography>
+                              </Grid>
+                            </Grid>
+                          </Grid>
+                        </Grid>
+                      </Grid>
+                      {/* <Grid item>
+                        <AirIcon />
+                        <Typography variant="body2">{weatherForDate.wind_speed} m/s</Typography>
+                      </Grid> */}
                     </Grid>
-                    <Grid item>
-                      <Typography variant="body2">
-                        Temperature: {weatherForDate.temperature}°C
-                      </Typography>
+                  </Box>
+                  {/* <Box key={index} color="#fff" mt={2} p={2} bgcolor="#333" borderRadius={4}>
+                    <Typography variant="body2">
+                      On {field.date}, {field.time}
+                    </Typography>
+                    <Grid container spacing={2} alignItems="center">
+                      <Grid item>
+                        {weatherForDate.icon && (
+                          <Avatar
+                            src={`https://api.met.no/images/weathericons/svg/${weatherForDate.icon}.svg`}
+                            alt="Weather Icon"
+                            sx={{ width: 24, height: 24 }}
+                          />
+                        )}
+                      </Grid>
+                      <Grid item>
+                        <Typography variant="body2">
+                          Temperature: {weatherForDate.temperature}°C
+                        </Typography>
+                      </Grid>
+                      <Grid item>
+                        <Typography variant="body2">
+                          Air Pressure: {weatherForDate.air_pressure} hPa
+                        </Typography>
+                      </Grid>
+                      <Grid item>
+                        <Typography variant="body2">
+                          Cloud Area Fraction: {weatherForDate.cloud_area_fraction}%
+                        </Typography>
+                      </Grid>
+                      <Grid item>
+                        <Typography variant="body2">
+                          Relative Humidity: {weatherForDate.relative_humidity}%
+                        </Typography>
+                      </Grid>
+                      <Grid item>
+                        <Typography variant="body2">
+                          Wind Direction: {weatherForDate.wind_direction}°
+                        </Typography>
+                      </Grid>
+                      <Grid item>
+                        <Typography variant="body2">
+                          Wind Speed: {weatherForDate.wind_speed} m/s
+                        </Typography>
+                      </Grid>
                     </Grid>
-                    <Grid item>
-                      <Typography variant="body2">
-                        Air Pressure: {weatherForDate.air_pressure} hPa
-                      </Typography>
-                    </Grid>
-                    <Grid item>
-                      <Typography variant="body2">
-                        Cloud Area Fraction: {weatherForDate.cloud_area_fraction}%
-                      </Typography>
-                    </Grid>
-                    <Grid item>
-                      <Typography variant="body2">
-                        Relative Humidity: {weatherForDate.relative_humidity}%
-                      </Typography>
-                    </Grid>
-                    <Grid item>
-                      <Typography variant="body2">
-                        Wind Direction: {weatherForDate.wind_direction}°
-                      </Typography>
-                    </Grid>
-                    <Grid item>
-                      <Typography variant="body2">
-                        Wind Speed: {weatherForDate.wind_speed} m/s
-                      </Typography>
-                    </Grid>
-                  </Grid>
-                </Box>
+                  </Box> */}
+                </>
               );
             })}
         </Box>
-        ;
       </Grid>
     </Box>
   );

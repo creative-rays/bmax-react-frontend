@@ -144,7 +144,7 @@ export default function App() {
         <Route path="/authentication/log-in" element={<LogIn />} />
         <Route path="/" element={<Navigate to="/search-address" />} />
         <Route
-          path="/projects/order-details"
+          path="/projects/order-details/:orderId"
           element={
             <ProtectedRoute
               allowedRoles={["admin", "customer", "vendor"]}

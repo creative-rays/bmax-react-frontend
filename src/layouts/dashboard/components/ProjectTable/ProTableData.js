@@ -43,7 +43,7 @@ function BasicMenu({ role, orderId }) {
   const handleView = () => {
     console.log("orderId:", orderId);
 
-    navigate("/projects/order-details", { state: { orderId } });
+    navigate(`/projects/order-details/${orderId}`);
   };
 
   return (
@@ -170,8 +170,7 @@ const ProTableData = (data) => {
           <Box sx={{ display: "flex", gap: "10px" }}>
             <Box
               component={NavLink}
-              to={"/projects/order-details"}
-              state={{ orderId: item.order_id }}
+              to={`/projects/order-details/${item.order_id}`}
             >
               <SoftButton variant="outlined" color="info" size="small">
                 View

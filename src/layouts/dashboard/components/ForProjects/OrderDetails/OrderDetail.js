@@ -30,6 +30,7 @@ import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 // Soft UI Dashboard React examples
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import VendorInfoCard from "layouts/dashboard/components/ForProjects/OrderDetails/Cards/VendorInfoCard";
+import CancelRequest from "layouts/dashboard/components/ForProjects/OrderDetails/CancelRequest/CancelRequest";
 
 //mui icons
 import FireTruckIcon from "@mui/icons-material/FireTruck";
@@ -64,12 +65,13 @@ import CloseIcon from "@mui/icons-material/Close";
 import { getOrderById } from "api/apiService";
 
 import { NavLink } from "react-router-dom";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 
 function OrderDetail() {
   const location = useLocation();
-  const orderId = location.state?.orderId;
-  console.log("orderDetail page-----", orderId, location.state);
+  const { orderId } = useParams();
+  // const orderId = location.state?.orderId;
+  console.log("orderDetail page-----", orderId,);
   const [orderData, setOrderData] = useState({});
   const [isLoading, setIsLoading] = useState(true);
 
@@ -116,6 +118,13 @@ function OrderDetail() {
     console.log("fetch order by id: ", data);
   };
 
+  const [openChangeRequest, setOpenChangeRequest] = useState(false);
+
+  const handleChangeRequest = () => {
+    console.log("click change request");
+    setOpenChangeRequest(!openChangeRequest);
+  };
+
   useEffect(() => {
     fetchOrderDetails();
   }, []);
@@ -129,7 +138,7 @@ function OrderDetail() {
           <>
             <SoftBox mt={4}>
               <Box sx={{ display: "flex", gap: "10px", justifyContent: "end" }}>
-                <Box component={NavLink} to={"/projects/order-details"}>
+                <Box component={NavLink} to={`/projects/order-details/${orderId}`}>
                   {role === "admin" && (
                     <SoftButton
                       display="flex"
@@ -145,7 +154,7 @@ function OrderDetail() {
                     </SoftButton>
                   )}
                 </Box>
-                <Box component={NavLink} to={"/projects/order-details"}>
+                <Box component={NavLink} to={`/projects/order-details/${orderId}`}>
                   {["admin", "vendor"].includes(role) && (
                     <SoftButton
                       display="flex"
@@ -155,13 +164,14 @@ function OrderDetail() {
                       variant="outlined"
                       color="info"
                       size="small"
+                      onClick={handleChangeRequest}
                     >
                       <AutorenewIcon fontSize="medium" />
                       <span style={{ padding: "0 6px" }}>Change Request</span>
                     </SoftButton>
                   )}
                 </Box>
-                <Box component={NavLink} to={"/projects/order-details"}>
+                <Box component={NavLink} to={`/projects/order-details/${orderId}`}>
                   {["admin", "vendor", "customer"].includes(role) && (
                     <SoftButton
                       display="flex"
@@ -351,7 +361,7 @@ function OrderDetail() {
                     title="Project Details"
                     info={{
                       order_title: `${orderData?.order_title}`,
-                      Created_Date: `${orderData?.created_date?.date.split(' ')[0]}`,
+                      Created_Date: `${orderData?.created_date?.date.split(" ")[0]}`,
                       status: `${orderData?.order_status?.status_text}  ${orderData?.order_status?.status_value}`,
                       description: `${orderData?.order_status?.status_description}`,
                     }}
@@ -362,6 +372,7 @@ function OrderDetail() {
             {orderData?.deliveries?.length > 0 && <ProjectAccordion data={orderData?.deliveries} />}
           </>
         )}
+        <CancelRequest modalVisble={openChangeRequest} setModalVisble={setOpenChangeRequest} />
       </Box>
     </DashboardLayout>
   );
