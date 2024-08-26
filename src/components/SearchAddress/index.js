@@ -17,6 +17,7 @@ import { fetchWeatherData } from "./weatherUtils";
 import DeviceThermostatIcon from "@mui/icons-material/DeviceThermostat";
 import AirIcon from "@mui/icons-material/Air";
 import { GiWindsock } from "react-icons/gi";
+import WeatherConditionsCard from "./components/WeatherConditionsCard";
 
 const containerStyle = {
   width: "100%",
@@ -273,102 +274,21 @@ const SearchAddress = () => {
                 );
               }
 
+              // 2024-08-28
+
+              const customDateFormat = `${field.date.split("-")[2]}/${field.date.split("-")[1]}/${
+                field.date.split("-")[0]
+              }`;
+
               return (
                 <>
-                  <Box key={index} color="#fff" mt={2} p={2} bgcolor="#333" borderRadius={4}>
-                    <Typography variant="body2">
-                      Condition On {field.date}, {field.time}
-                    </Typography>
-                    <Grid container direction="row" p={4} spacing={4} alignItems="center">
-                      <Grid item>
-                        {weatherForDate.icon && (
-                          <Avatar
-                            src={`https://api.met.no/images/weathericons/svg/${weatherForDate.icon}.svg`}
-                            alt="Weather Icon"
-                            sx={{ width: 48, height: 48 }}
-                          />
-                        )}
-                      </Grid>
-                      <Grid item>
-                        <Grid container direction="row" alignItems="center" spacing={1}>
-                          <Grid item>
-                            <DeviceThermostatIcon  fontSize="medium"/>
-                          </Grid>
-                          <Grid item>
-                            <Typography
-                              variant="body2"
-                              fontWeight="semibold"
-                              sx={{ fontSize: "32px" }}
-                            >
-                              {weatherForDate.temperature}°
-                            </Typography>
-                          </Grid>
-                        </Grid>
-                      </Grid>
-                      {/* <Grid item>
-                        <Typography variant="body2">
-                          Air Pressure: {weatherForDate.air_pressure} hPa
-                        </Typography>
-                      </Grid>
-                      <Grid item>
-                        <Typography variant="body2">
-                          Cloud Area Fraction: {weatherForDate.cloud_area_fraction}%
-                        </Typography>
-                      </Grid>
-                      <Grid item>
-                        <Typography variant="body2">
-                          Relative Humidity: {weatherForDate.relative_humidity}%
-                        </Typography>
-                      </Grid> */}
-                      <Grid item>
-                        <Grid container direction="row" alignItems="center" spacing={1}>
-                          <Grid item>
-                            <GiWindsock size="24px" />
-                          </Grid>
-                          <Grid item>
-                            <Typography
-                              variant="body2"
-                              fontWeight="semibold"
-                              sx={{ fontSize: "32px" }}
-                            >
-                              {weatherForDate.wind_direction}°
-                            </Typography>
-                          </Grid>
-                        </Grid>
-                      </Grid>
-                      {/* <Grid item>
-                        <GiWindsock />
-                        <Typography variant="body2">{weatherForDate.wind_direction}°</Typography>
-                      </Grid> */}
-                      <Grid item>
-                        <Grid container direction="row" alignItems="center" spacing={1}>
-                          <Grid item>
-                            <AirIcon fontSize="medium" />
-                          </Grid>
-                          <Grid item>
-                            <Grid container direction="row" alignItems="baseline" spacing={1}>
-                              <Grid item>
-                                <Typography
-                                  variant="body2"
-                                  fontWeight="semibold"
-                                  sx={{ fontSize: "32px" }}
-                                >
-                                  {weatherForDate.wind_speed}
-                                </Typography>
-                              </Grid>
-                              <Grid item>
-                                <Typography variant="body2">m/s</Typography>
-                              </Grid>
-                            </Grid>
-                          </Grid>
-                        </Grid>
-                      </Grid>
-                      {/* <Grid item>
-                        <AirIcon />
-                        <Typography variant="body2">{weatherForDate.wind_speed} m/s</Typography>
-                      </Grid> */}
-                    </Grid>
-                  </Box>
+                  <WeatherConditionsCard
+                    index={index}
+                    date={customDateFormat}
+                    time={field.time}
+                    weatherForDate={weatherForDate}
+                  />
+
                   {/* <Box key={index} color="#fff" mt={2} p={2} bgcolor="#333" borderRadius={4}>
                     <Typography variant="body2">
                       On {field.date}, {field.time}
@@ -545,144 +465,172 @@ const SearchAddress = () => {
 
               {showDateTime && (
                 <Box>
-                  {dateTimeFields.map((field, index) => (
-                    <Grid container spacing={2} alignItems={"center"} key={index} mb={3}>
-                      <Grid item xs={12}>
-                        <Grid container spacing={2} alignItems={"center"}>
-                          <Grid item xs={12} sm={6} md={6}>
-                            <SoftInput
-                              id={`date-${index}`}
-                              label="Select Date"
-                              size="large"
-                              type="date"
-                              value={field.date}
-                              onBlur={handleDateValidation}
-                              onClick={() => console.log("on click")}
-                              onChange={(e) => handleDateTimeChange(index, "date", e.target.value)}
-                              InputLabelProps={{
-                                shrink: true,
-                              }}
-                              icon={{
-                                component: (
-                                  <Box sx={{ cursor: "pointer" }}>
-                                    <TodayIcon sx={{ color: "info.main" }} />
-                                  </Box>
-                                ),
-                                direction: "left",
-                              }}
-                              inputProps={{
-                                min: currentDate,
-                                max: formattedMaxDate,
-                              }}
-                            />
-                          </Grid>
-                          <Grid item xs={12} sm={6} md={5}>
-                            <SoftInput
-                              id={`time-${index}`}
-                              label="Select Time"
-                              type="time"
-                              size="large"
-                              value={field.time}
-                              onChange={(e) => handleDateTimeChange(index, "time", e.target.value)}
-                              InputLabelProps={{
-                                shrink: true,
-                              }}
-                              icon={{
-                                component: (
-                                  <Box sx={{ cursor: "pointer" }}>
-                                    <AccessTimeFilledIcon sx={{ color: "info.main" }} />
-                                  </Box>
-                                ),
-                                direction: "left",
-                              }}
-                            />
-                          </Grid>
-                          <Grid
-                            item
-                            xs={12}
-                            sm={12}
-                            md={1}
-                            sx={{
-                              display: "flex",
-                              gap: "10px",
-                              justifyContent: "center",
-                              alignItems: "center",
-                              padding: 0,
-                              margin: 0,
-                            }}
-                          >
-                            {index === 0 ? (
-                              <SoftButton
-                                variant="contained"
-                                size="small"
-                                onClick={handleAddDateTimeField}
-                                color="info"
+                  {dateTimeFields.map((field, index) => {
+                    const customDateFormat = `${field.date.split("-")[2]}/${
+                      field.date.split("-")[1]
+                    }/${field.date.split("-")[0]}`;
+
+                    return (
+                      <>
+                        <Grid container spacing={2} alignItems={"center"} key={index} mb={3}>
+                          <Grid item xs={12}>
+                            <Grid container spacing={2} alignItems={"center"}>
+                              <Grid item xs={12} sm={6} md={6}>
+                                <SoftInput
+                                  id={`date-${index}`}
+                                  label="Select Date"
+                                  size="large"
+                                  type="date"
+                                  value={field.date}
+                                  onBlur={handleDateValidation}
+                                  onClick={() => console.log("on click")}
+                                  onChange={(e) =>
+                                    handleDateTimeChange(index, "date", e.target.value)
+                                  }
+                                  InputLabelProps={{
+                                    shrink: true,
+                                  }}
+                                  icon={{
+                                    component: (
+                                      <Box sx={{ cursor: "pointer" }}>
+                                        <TodayIcon sx={{ color: "info.main" }} />
+                                      </Box>
+                                    ),
+                                    direction: "left",
+                                  }}
+                                  inputProps={{
+                                    min: currentDate,
+                                    max: formattedMaxDate,
+                                  }}
+                                />
+                              </Grid>
+                              <Grid item xs={12} sm={6} md={5}>
+                                <SoftInput
+                                  id={`time-${index}`}
+                                  label="Select Time"
+                                  type="time"
+                                  size="large"
+                                  value={field.time}
+                                  onChange={(e) =>
+                                    handleDateTimeChange(index, "time", e.target.value)
+                                  }
+                                  InputLabelProps={{
+                                    shrink: true,
+                                  }}
+                                  icon={{
+                                    component: (
+                                      <Box sx={{ cursor: "pointer" }}>
+                                        <AccessTimeFilledIcon sx={{ color: "info.main" }} />
+                                      </Box>
+                                    ),
+                                    direction: "left",
+                                  }}
+                                />
+                              </Grid>
+                              <Grid
+                                item
+                                xs={12}
+                                sm={12}
+                                md={1}
                                 sx={{
-                                  gap: "3px",
-                                  minWidth: 50,
-                                  padding: "16px",
+                                  display: "flex",
+                                  gap: "10px",
+                                  justifyContent: "center",
+                                  alignItems: "center",
+                                  padding: 0,
+                                  margin: 0,
                                 }}
                               >
-                                <AddIcon fontSize="small" />
-                              </SoftButton>
-                            ) : (
-                              <SoftButton
-                                variant="contained"
-                                size="small"
-                                color="info"
-                                onClick={() => handleClearDateTimeField(index)}
-                                sx={{
-                                  gap: "3px",
-                                  minWidth: 50,
-                                  padding: "16px",
-                                }}
-                              >
-                                <RemoveIcon fontSize="small" />
-                              </SoftButton>
-                            )}
+                                {index === 0 ? (
+                                  <SoftButton
+                                    variant="contained"
+                                    size="small"
+                                    onClick={handleAddDateTimeField}
+                                    color="info"
+                                    sx={{
+                                      gap: "3px",
+                                      minWidth: 50,
+                                      padding: "16px",
+                                    }}
+                                  >
+                                    <AddIcon fontSize="small" />
+                                  </SoftButton>
+                                ) : (
+                                  <SoftButton
+                                    variant="contained"
+                                    size="small"
+                                    color="info"
+                                    onClick={() => handleClearDateTimeField(index)}
+                                    sx={{
+                                      gap: "3px",
+                                      minWidth: 50,
+                                      padding: "16px",
+                                    }}
+                                  >
+                                    <RemoveIcon fontSize="small" />
+                                  </SoftButton>
+                                )}
+                              </Grid>
+                            </Grid>
                           </Grid>
+                          {/* {weatherData[index] && (
+                          <Grid item xs={12}>
+                            <Typography
+                              key={index}
+                              variant="body2"
+                              fontSize={".9rem"}
+                              sx={{ display: "flex", alignItems: "center", gap: "10px" }}
+                            >
+                              {weatherData[index]?.weather?.icon && (
+                                <Avatar
+                                  src={`https://api.met.no/images/weathericons/svg/${weatherData[index].weather.icon}.svg`}
+                                  alt="Weather Icon"
+                                  sx={{ width: 24, height: 24 }}
+                                />
+                              )}
+                              <span>Temperature: {weatherData[index].weather.temperature}°C</span>
+                              <span style={{ marginLeft: "10px" }}>
+                                Air Pressure: {weatherData[index].weather.air_pressure} hPa
+                              </span>
+                              <span style={{ marginLeft: "10px" }}>
+                                Cloud Area Fraction:{" "}
+                                {weatherData[index].weather.cloud_area_fraction}%
+                              </span>
+                              <span style={{ marginLeft: "10px" }}>
+                                Relative Humidity: {weatherData[index].weather.relative_humidity}%
+                              </span>
+                              <span style={{ marginLeft: "10px" }}>
+                                Wind Direction: {weatherData[index].weather.wind_direction}°
+                              </span>
+                              <span style={{ marginLeft: "10px" }}>
+                                Wind Speed: {weatherData[index].weather.wind_speed} m/s
+                              </span>
+                            </Typography>
+                          </Grid>
+                          //    <WeatherConditionsCard
+                          //    index={index}
+                          //    date={customDateFormat}
+                          //    time={field.selectedDateTime}
+                          //    weatherForDate={weatherData[index].weather}
+                          //  />
+                        )} */}
                         </Grid>
-                      </Grid>
-                      {weatherData[index] && (
-                        <Grid item xs={12}>
-                          <Typography
+                        {weatherData[index] && (
+                          <WeatherConditionsCard
                             key={index}
-                            variant="body2"
-                            fontSize={".9rem"}
-                            sx={{ display: "flex", alignItems: "center", gap: "10px" }}
-                          >
-                            {weatherData[index]?.weather?.icon && (
-                              <Avatar
-                                src={`https://api.met.no/images/weathericons/svg/${weatherData[index].weather.icon}.svg`}
-                                alt="Weather Icon"
-                                sx={{ width: 24, height: 24 }}
-                              />
-                            )}
-                            <span>Temperature: {weatherData[index].weather.temperature}°C</span>
-                            <span style={{ marginLeft: "10px" }}>
-                              Air Pressure: {weatherData[index].weather.air_pressure} hPa
-                            </span>
-                            <span style={{ marginLeft: "10px" }}>
-                              Cloud Area Fraction: {weatherData[index].weather.cloud_area_fraction}%
-                            </span>
-                            <span style={{ marginLeft: "10px" }}>
-                              Relative Humidity: {weatherData[index].weather.relative_humidity}%
-                            </span>
-                            <span style={{ marginLeft: "10px" }}>
-                              Wind Direction: {weatherData[index].weather.wind_direction}°
-                            </span>
-                            <span style={{ marginLeft: "10px" }}>
-                              Wind Speed: {weatherData[index].weather.wind_speed} m/s
-                            </span>
-                          </Typography>
-                        </Grid>
-                      )}
-                    </Grid>
-                  ))}
+                            index={index}
+                            date={customDateFormat}
+                            time={field.time}
+                            weatherForDate={weatherData[index].weather}
+                          />
+                        )}
+                      </>
+                    );
+                  })}
                 </Box>
               )}
               <Grid container justifyContent={"flex-end"}>
-                <Grid item xs={12} sm={4} md={3}>
+                <Grid item xs={12} sm={4} md={3} py={4}>
                   <SoftButton variant="contained" color="info" fullWidth onClick={handleNextClick}>
                     NEXT
                   </SoftButton>

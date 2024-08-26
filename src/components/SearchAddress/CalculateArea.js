@@ -34,8 +34,11 @@ import Trackcar from "./Trackcar";
 import DirectTip from "./DirectTip";
 import PumpMixer from "./PumpMixer";
 import SlideCar from "./SlideCar"; // Import your popup components
-import { useGlobalState } from 'globalState/globalState';
-import { fetchVehicleTypes, fetchTypeProject } from './weatherUtils'; // Correct import statement
+import { useGlobalState } from "globalState/globalState";
+import { fetchVehicleTypes, fetchTypeProject } from "./weatherUtils"; // Correct import statement
+import WeatherConditionsCard from "./components/WeatherConditionsCard";
+
+
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -49,15 +52,15 @@ const MenuProps = {
 };
 
 const nameTranslation = {
-  "Garasjegulv": "Garage floor",
-  "Kjellergulv": "Basement floor",
-  "Systemelementer": "System elements",
-  "Veggstøp": "Wall plaster",
-  "Terrasseplate": "Terrace board",
-  "Trapper": "Stairs",
+  Garasjegulv: "Garage floor",
+  Kjellergulv: "Basement floor",
+  Systemelementer: "System elements",
+  Veggstøp: "Wall plaster",
+  Terrasseplate: "Terrace board",
+  Trapper: "Stairs",
   "Annen støp ute": "Another cast outside",
   "Annen støp inne": "Other cast inside",
-  "Støttemur": "Retaining wall"
+  Støttemur: "Retaining wall",
 };
 
 const names = [
@@ -165,9 +168,9 @@ const CalculateArea = () => {
     // Fetch type project when the value changes
     try {
       const typeProject = await fetchTypeProject();
-      console.log('Fetched Type Project:', typeProject);
+      console.log("Fetched Type Project:", typeProject);
     } catch (error) {
-      console.error('Error fetching type project:', error);
+      console.error("Error fetching type project:", error);
     }
   };
 
@@ -201,15 +204,15 @@ const CalculateArea = () => {
       // Fetch vehicle types when an item is selected
       try {
         const vehicleTypes = await fetchVehicleTypes();
-        console.log('Fetched Vehicle Types:', vehicleTypes);
+        console.log("Fetched Vehicle Types:", vehicleTypes);
       } catch (error) {
-        console.error('Error fetching vehicle types:', error);
+        console.error("Error fetching vehicle types:", error);
       }
     }
   };
 
   useEffect(() => {
-    console.log('Vehicle Types State:', vehicleTypes); // Log vehicle types state whenever it changes
+    console.log("Vehicle Types State:", vehicleTypes); // Log vehicle types state whenever it changes
   }, [vehicleTypes]);
 
   const handleInputClick2 = () => {
@@ -234,10 +237,10 @@ const CalculateArea = () => {
       selectedItem,
       weatherData, // Add this line
     };
-  
+
     navigate("/summary", { state: step1Data });
   };
-  
+
   const isDayTime = (time) => {
     const hour = parseInt(time.split(":")[0], 10);
     return hour >= 6 && hour < 18;
@@ -252,7 +255,7 @@ const CalculateArea = () => {
         backgroundColor: "#17C1E8",
         borderRadius: "7px",
         padding: "20px",
-        marginTop: "170px"
+        marginTop: "170px",
       }}
     >
       <Grid container direction="column" gap={2}>
@@ -271,40 +274,71 @@ const CalculateArea = () => {
           <Typography color={"#fff"} variant="body2">
             Deliver to {address}
           </Typography>
-          {dateTimeFields && dateTimeFields.map((field, index) => (
-            field.date && field.time ? (
-              <Box key={index} color="#fff" mt={2} p={2} bgcolor="#333" borderRadius={4}>
-                <Typography variant="body2">
-                  On {field.date}, {field.time}
-                </Typography>
-                <Grid container spacing={2} alignItems="center">
-                  <Grid item>
-                    {weatherData[index]?.weather?.icon && (
-                      <Avatar src={`https://api.met.no/images/weathericons/svg/${weatherData[index].weather.icon}.svg`} alt="Weather Icon" sx={{ width: 24, height: 24 }} />
-                    )}
-                  </Grid>
-                  <Grid item>
-                    <Typography variant="body2">Temperature: {weatherData[index]?.weather?.temperature}°C</Typography>
-                  </Grid>
-                  <Grid item>
-                    <Typography variant="body2">Air Pressure: {weatherData[index]?.weather?.air_pressure} hPa</Typography>
-                  </Grid>
-                  <Grid item>
-                    <Typography variant="body2">Cloud Area Fraction: {weatherData[index]?.weather?.cloud_area_fraction}%</Typography>
-                  </Grid>
-                  <Grid item>
-                    <Typography variant="body2">Relative Humidity: {weatherData[index]?.weather?.relative_humidity}%</Typography>
-                  </Grid>
-                  <Grid item>
-                    <Typography variant="body2">Wind Direction: {weatherData[index]?.weather?.wind_from_direction}°</Typography>
-                  </Grid>
-                  <Grid item>
-                    <Typography variant="body2">Wind Speed: {weatherData[index]?.weather?.wind_speed} m/s</Typography>
-                  </Grid>
-                </Grid>
-              </Box>
-            ) : null
-          ))}
+          {dateTimeFields &&
+            dateTimeFields.map((field, index) => {
+              const customDateFormat = `${field.date.split("-")[2]}/${field.date.split("-")[1]}/${
+                field.date.split("-")[0]
+              }`;
+              return (
+                <>
+                  {field.date && field.time ? (
+                    // <Box key={index} color="#fff" mt={2} p={2} bgcolor="#333" borderRadius={4}>
+                    //   <Typography variant="body2">
+                    //     On {field.date}, {field.time}
+                    //   </Typography>
+                    //   <Grid container spacing={2} alignItems="center">
+                    //     <Grid item>
+                    //       {weatherData[index]?.weather?.icon && (
+                    //         <Avatar
+                    //           src={`https://api.met.no/images/weathericons/svg/${weatherData[index].weather.icon}.svg`}
+                    //           alt="Weather Icon"
+                    //           sx={{ width: 24, height: 24 }}
+                    //         />
+                    //       )}
+                    //     </Grid>
+                    //     <Grid item>
+                    //       <Typography variant="body2">
+                    //         Temperature: {weatherData[index]?.weather?.temperature}°C
+                    //       </Typography>
+                    //     </Grid>
+                    //     <Grid item>
+                    //       <Typography variant="body2">
+                    //         Air Pressure: {weatherData[index]?.weather?.air_pressure} hPa
+                    //       </Typography>
+                    //     </Grid>
+                    //     <Grid item>
+                    //       <Typography variant="body2">
+                    //         Cloud Area Fraction: {weatherData[index]?.weather?.cloud_area_fraction}%
+                    //       </Typography>
+                    //     </Grid>
+                    //     <Grid item>
+                    //       <Typography variant="body2">
+                    //         Relative Humidity: {weatherData[index]?.weather?.relative_humidity}%
+                    //       </Typography>
+                    //     </Grid>
+                    //     <Grid item>
+                    //       <Typography variant="body2">
+                    //         Wind Direction: {weatherData[index]?.weather?.wind_from_direction}°
+                    //       </Typography>
+                    //     </Grid>
+                    //     <Grid item>
+                    //       <Typography variant="body2">
+                    //         Wind Speed: {weatherData[index]?.weather?.wind_speed} m/s
+                    //       </Typography>
+                    //     </Grid>
+                    //   </Grid>
+                    // </Box>
+                    <WeatherConditionsCard
+                      key={index}
+                      index={index}
+                      date={customDateFormat}
+                      time={field.time}
+                      weatherForDate={weatherData[index].weather}
+                    />
+                  ) : null}
+                </>
+              );
+            })}
         </Box>
         <Typography color={"#fff"} variant="body2">
           <span style={{ fontWeight: "900", fontSize: "25px" }}>Step 2</span> Delivery
@@ -676,11 +710,7 @@ const CalculateArea = () => {
           </Popover>
 
           <Grid container spacing={2}>
-            <Grid
-              item
-              xs={12}
-              sx={{ m: 1, display: "flex", justifyItems: "start" }}
-            >
+            <Grid item xs={12} sx={{ m: 1, display: "flex", justifyItems: "start" }}>
               <Typography
                 variant="h4"
                 sx={{ display: "flex", justifyContent: "center", color: "black" }}
@@ -945,7 +975,10 @@ const CalculateArea = () => {
                   <FormControlLabel
                     sx={{ marginLeft: "auto" }}
                     control={
-                      <Checkbox checked={accelerator} onChange={() => setAccelerator(!accelerator)} />
+                      <Checkbox
+                        checked={accelerator}
+                        onChange={() => setAccelerator(!accelerator)}
+                      />
                     }
                   />
                 </Box>
